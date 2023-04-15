@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "songwhip_api"
+version = "0.1.0"
+description = ""
+authors = ["ульба <ulbwa@icloud.com>"]
+readme = "README.md"
+packages = [{include = "songwhip_api"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+httpx = "^0.24.0"
+httpx-cache = "^0.9.0"
+orjson = "^3.8.10"
+pydantic = "^1.10.7"
+bs4 = "^0.0.1"
+html5lib = "^1.1"
+pytz = "^2023.3"
+strenum = "^0.4.10"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
