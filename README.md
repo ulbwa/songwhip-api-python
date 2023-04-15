@@ -1,4 +1,4 @@
-# [SongLink](https://odesli.co) API Wrapper
+# [SongWhip](https://songwhip.com) API Wrapper
 
 [![Python 3.10](https://img.shields.io/badge/python-^3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](https://mit-license.org/)
