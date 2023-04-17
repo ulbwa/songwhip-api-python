@@ -60,7 +60,7 @@ class Entity(BaseModel):
     name: str
     image: str
     has_links: List[PlatformName]
-    links: List[Link]
+    links: Optional[List[Link]]
     links_countries: Optional[List[str]]
     souce_country: str
     created_at_timestamp: datetime.datetime
@@ -69,11 +69,14 @@ class Entity(BaseModel):
     class Config:
         use_enum_values = True
 
+    def get_url(self, basic_url: str = "https://songwhip.com") -> str:
+        return basic_url + self.page_path
+
 
 class Artist(Entity):
     description: Optional[str]
     spotify_id: Optional[str]
-    is_partial: bool
+    is_partial: Optional[bool]
 
     class Config:
         use_enum_values = True
