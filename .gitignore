@@ -128,3 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
+redirects.sqlite
+http_cache
+poetry.lock

@@ -1,22 +1,26 @@
+from typing import List
 from bs4 import BeautifulSoup
 
-from songwhip_api.types import EntityType, Response
-from songwhip_api.types import Artist
-from songwhip_api.types import Album
-from songwhip_api.types import Track
-from songwhip_api.types import Link
-from songwhip_api.types import PlatformName
+from songwhip_api.types import (
+    EntityType,
+    Response,
+    Artist,
+    Album,
+    Track,
+    Link,
+    PlatformName,
+)
+from songwhip_api.types.exceptions import APIException
 
-from songwhip_api.utils.cache import TTLCache
+from aiohttp.typedefs import DEFAULT_JSON_DECODER
+from aiohttp_client_cache import CachedSession, FileBackend, CacheBackend
+from aiohttp_proxy import ProxyConnector
 
-import pytz
-import httpx_cache
 import orjson
 import pkg_resources
 import datetime
-
-from songwhip_api.types.exceptions import APIException
-
+import random
+import pytz
 
 try:
     __version__ = pkg_resources.get_distribution("songwhip_api").version
@@ -29,49 +33,65 @@ class SongWhip:
         self,
         api_url: str = "https://songwhip.com/",
         api_timeout: int = 60,
-        use_cache: bool = True,
-        cache_time: int = 900,
+        proxy: List[str] | str | None = None,
+        always_use_proxy: bool = False,
+        cache_backend: CacheBackend
+        | None = FileBackend(
+            expire_after=900,
+            ignored_parameters=["key"],
+            allowed_codes=(200,),
+            allowed_methods=["GET", "POST"],
+            cache_control=False,
+        ),
+        use_orjson: bool = True,
     ) -> None:
         self.api_url = api_url.rstrip("/")
-        self.api_timeout = api_timeout
-        self.use_cache = use_cache
-        self.cache_time = cache_time
+        self.api_timeout: int = api_timeout
+        self.cache_backend: CacheBackend | None = cache_backend
+        self.connections: List[str | None] = []
+        if proxy is not None:
+            for _proxy in proxy if isinstance(proxy, list) else [proxy]:
+                self.connections.append(_proxy)
+        if not always_use_proxy:
+            self.connections.append(None)
+        if not self.connections:
+            raise ValueError("No connections specified.")
+        self.use_orjson: bool = use_orjson
 
     def __repr__(self) -> str:
         return f"<SongWhip at {hex(id(self))}>"
 
     async def private_request(self, url: str) -> Response:
-        async with httpx_cache.AsyncClient(
+        connection = random.choice(self.connections)
+
+        async with CachedSession(
+            connector=None
+            if connection is None
+            else ProxyConnector.from_url(connection),
+            cache=self.cache_backend,
             headers={
                 "User-Agent": f"SongWhipAPI/v{__version__}",
-                "cache-control": f"max-age={self.cache_time}"
-                if self.use_cache
-                else "no-cache",
             },
-            cache=httpx_cache.FileCache(),
-            follow_redirects=True,
-        ) as client:
-            request = client.build_request(
-                "GET",
-                "{}/{}".format(self.api_url, url),
+        ) as session:
+            async with session.get(
+                url=f"{self.api_url}/{url}",
                 timeout=self.api_timeout,
-            )
-            response = await client.send(request)
-            soup = BeautifulSoup(response.content, "html5lib")
+            ) as response:
+                soup = BeautifulSoup(await response.read(), "html5lib")
 
-            try:
-                data = (
-                    orjson.loads(
-                        soup.find("script", {"id": "__NEXT_DATA__"}).string.encode()
+                try:
+                    data = (
+                        orjson.loads(
+                            soup.find("script", {"id": "__NEXT_DATA__"}).string.encode()
+                        )
+                        .get("props", {})
+                        .get("initialReduxState", {})
                     )
-                    .get("props", {})
-                    .get("initialReduxState", {})
-                )
-            except Exception:
-                data = {}
+                except Exception:
+                    data = {}
 
-            if response.status_code != 200 or data == {}:
-                raise APIException(status_code=response.status_code)
+            if response.status != 200 or data == {}:
+                raise APIException(status_code=response.status)
 
             return Response(
                 artists=[
@@ -204,35 +224,37 @@ class SongWhip:
                 ],
             )
 
-    @TTLCache(time_to_live=900, maxsize=1024)
     async def public_request(
         self,
         url: str,
     ) -> Response:
-        async with httpx_cache.AsyncClient(
+        connection = random.choice(self.connections)
+
+        async with CachedSession(
+            connector=None
+            if connection is None
+            else ProxyConnector.from_url(connection),
+            cache=self.cache_backend,
             headers={
                 "User-Agent": f"SongWhipAPI/v{__version__}",
-                "cache-control": "no-cache",
             },
-            cache=None,
-        ) as client:
-            request = client.build_request(
-                "POST",
-                self.api_url,
+        ) as session:
+            async with session.post(
+                url=self.api_url,
                 timeout=self.api_timeout,
                 data=orjson.dumps({"url": url}),
-            )
-            response = await client.send(request)
+            ) as response:
+                try:
+                    data = await response.json(
+                        loads=orjson.loads if self.use_orjson else DEFAULT_JSON_DECODER
+                    )
+                except Exception:
+                    data = {}
 
-            try:
-                data = orjson.loads(response.content)
-            except Exception:
-                data = {}
-
-            if response.status_code != 200 or data == {}:
+            if response.status != 200 or not data:
                 raise APIException(
                     status_code=response.status_code,
-                    message=response.content.decode() if response.content else None,
+                    message=await response.text() if await response.text() else None,
                 )
 
             if data["type"] == EntityType.track:
