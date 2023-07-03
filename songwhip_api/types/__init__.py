@@ -58,7 +58,7 @@ class Entity(BaseModel):
     path: str
     page_path: str
     name: str
-    image: str
+    image: str | None
     has_links: List[PlatformName]
     links: Optional[List[Link]]
     links_countries: Optional[List[str]]

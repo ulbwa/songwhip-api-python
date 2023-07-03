@@ -101,7 +101,7 @@ class SongWhip:
                         path=artist["value"]["path"],
                         page_path=artist["value"]["pagePath"],
                         name=artist["value"]["name"],
-                        image=artist["value"]["image"],
+                        image=artist["value"].get("image"),
                         links=[
                             Link(
                                 platform=platform,
