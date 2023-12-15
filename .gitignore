@@ -131,3 +131,4 @@ dmypy.json
 redirects.sqlite
 http_cache
 poetry.lock
+.idea

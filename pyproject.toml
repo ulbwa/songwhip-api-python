@@ -1,19 +1,19 @@
 [tool.poetry]
 name = "songwhip_api"
-version = "0.2.2"
+version = "0.2.3"
 description = ""
 authors = ["ульба <ulbwa@icloud.com>"]
 readme = "README.md"
 packages = [{include = "songwhip_api"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-orjson = "^3.8.10"
-pydantic = "^1.10.7"
+python = "^3.11"
+aiohttp = "^3.8.6"
+orjson = "^3.9.8"
+pydantic = "^2.4.2"
 html5lib = "^1.1"
 pytz = "^2023.3"
-aiohttp = "^3.8.4"
-aiohttp-client-cache = "^0.8.1"
+aiohttp-client-cache = {extras = ["all"], version = "^0.10.0"}
 aiofiles = "^23.1.0"
 aiosqlite = "^0.19.0"
 aiohttp-proxy = "^0.1.2"
