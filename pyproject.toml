@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "songwhip_api"
-version = "0.2.3"
+version = "0.3.0"
 description = ""
 authors = ["ульба <ulbwa@icloud.com>"]
 readme = "README.md"

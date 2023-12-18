@@ -1,11 +1,9 @@
+import datetime
 from enum import Enum
-
 from typing import List
 from typing import Optional
 
 from pydantic import BaseModel
-
-import datetime
 
 
 class PlatformName(str, Enum):
@@ -47,56 +45,52 @@ class Link(BaseModel):
 
 
 class EntityType(str, Enum):
-    artist = "artist"
-    album = "album"
-    track = "track"
+    ARTIST = "artist"
+    ALBUM = "album"
+    TRACK = "track"
 
 
 class Entity(BaseModel):
     type: EntityType
     id: int
     path: str
-    page_path: str
     name: str
+    url: str
+    source_url: str
+    source_country: str
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime]
     image: str | None
-    has_links: List[PlatformName]
     links: Optional[List[Link]]
     links_countries: Optional[List[str]]
-    souce_country: str
-    created_at_timestamp: datetime.datetime
-    refreshed_at_timestamp: Optional[datetime.datetime]
 
     class Config:
         use_enum_values = True
 
     def get_url(self, basic_url: str = "https://songwhip.com") -> str:
-        return basic_url + self.page_path
+        return basic_url + self.url
 
 
 class Artist(Entity):
     description: Optional[str]
-    spotify_id: Optional[str]
-    is_partial: Optional[bool]
 
     class Config:
         use_enum_values = True
 
 
 class Album(Entity):
-    spotify_id: Optional[str]
+    release_date: datetime.datetime
+    upc: str | None
 
     class Config:
         use_enum_values = True
 
 
 class Track(Entity):
-    artist_ids: List[int]
+    release_date: datetime.datetime
+    isrc: str | None
+    is_explicit: bool | None
+    artists: List[Artist]
 
     class Config:
         use_enum_values = True
-
-
-class Response(BaseModel):
-    artists: List[Artist]
-    albums: List[Album]
-    tracks: List[Track]
