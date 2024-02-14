@@ -21,3 +21,6 @@ class APIException(Exception):
             if message is None
             else "{}: {}".format(status_code, message)
         )
+
+
+__all__ = ("APIException",)
