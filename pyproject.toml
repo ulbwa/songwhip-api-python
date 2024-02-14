@@ -1,23 +1,19 @@
 [tool.poetry]
 name = "songwhip_api"
-version = "0.3.0"
-description = ""
+version = "0.4.0"
+description = "A fast and asynchronous wrapper for the SongWhip written in Python."
 authors = ["ульба <ulbwa@icloud.com>"]
 readme = "README.md"
-packages = [{include = "songwhip_api"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-aiohttp = "^3.8.6"
-orjson = "^3.9.8"
-pydantic = "^2.4.2"
-html5lib = "^1.1"
-pytz = "^2023.3"
-aiohttp-client-cache = {extras = ["all"], version = "^0.10.0"}
-aiofiles = "^23.1.0"
-aiosqlite = "^0.19.0"
+orjson = "^3.9.14"
+aiohttp-client-cache = "^0.11.0"
 aiohttp-proxy = "^0.1.2"
-beautifulsoup4 = "^4.12.2"
+fake-headers = "^1.0.2"
+pydantic = "^2.6.1"
+aiofiles = "^23.2.1"
+aiosqlite = "^0.19.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"

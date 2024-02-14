@@ -130,5 +130,4 @@ dmypy.json
 .DS_Store
 redirects.sqlite
 http_cache
-poetry.lock
 .idea

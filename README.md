@@ -1,11 +1,15 @@
 # [SongWhip](https://songwhip.com) API Wrapper
 
-[![Python 3.10](https://img.shields.io/badge/python-^3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
+[![Python 3.11](https://img.shields.io/badge/python-^3.11-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](https://mit-license.org/)
 
-A fast and asynchronous wrapper for the SongWhip API written in Python.
+A fast and asynchronous wrapper for the SongWhip written in Python.
 
-API Documentation: [songwhip.com](https://songwhip.com/faq)
+# Features
+
+- Asynchronous API requests for improved performance.
+- Easy integration into existing asyncio-based Python projects.
+- Utilizes caching with `aiohttp_client_cache` for efficient handling of repeated API requests.
 
 ## Installation
 
@@ -33,4 +37,3 @@ async def main():
 
 asyncio.run(main())
 ```
-
