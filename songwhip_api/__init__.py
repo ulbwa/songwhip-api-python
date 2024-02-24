@@ -102,7 +102,9 @@ class SongWhip:
                 timeout=self.api_timeout,
             ) as response:
                 try:
-                    data = orjson.loads(await response.read())["data"]["item"]
+                    raw_data = orjson.loads(await response.read())
+                    logger.debug("Got response on URL %s: %s", url, raw_data)
+                    data = raw_data["data"]["item"]
                 except Exception as e:
                     raise APIException(status_code=response.status, message=str(e))
 

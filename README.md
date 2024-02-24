@@ -32,7 +32,7 @@ songwhip = SongWhip()
 
 
 async def main():
-    links = await songwhip.private_request("https://open.spotify.com/album/57zNKp8j0mG1rNtbEVkLMV?si=kWUYHUedRj-vGhGncJD2cw")
+    links = await songwhip.request("https://open.spotify.com/album/57zNKp8j0mG1rNtbEVkLMV?si=kWUYHUedRj-vGhGncJD2cw")
     print(links)
 
 asyncio.run(main())
