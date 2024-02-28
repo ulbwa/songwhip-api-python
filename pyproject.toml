@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "songwhip_api"
-version = "0.4.2"
+version = "0.4.3"
 description = "A fast and asynchronous wrapper for the SongWhip written in Python."
 authors = ["ульба <ulbwa@icloud.com>"]
 readme = "README.md"
