@@ -10,9 +10,9 @@ from aiohttp_client_cache import CachedSession, FileBackend, CacheBackend
 from aiohttp_proxy import ProxyConnector
 from fake_headers import Headers
 
-from songwhip_api.types import *
-
 logger = logging.getLogger("songwhip_api")
+
+from songwhip_api.types import *
 
 
 class SongWhip:
